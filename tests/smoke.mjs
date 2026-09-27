@@ -19,14 +19,14 @@ await mkdir('artifacts',{recursive:true});await mkdir('public/models',{recursive
 const context=await browser.newContext({viewport:{width:1440,height:1000},deviceScaleFactor:1});
 const page=await context.newPage();
 page.on('pageerror',e=>errors.push(e.message));page.on('console',e=>{if(e.type()==='error')errors.push(e.text());});
-const state=()=>page.evaluate(()=>window.biograpiDemo.state);
-const stats=()=>page.evaluate(()=>window.biograpiDemo.stats);
-const settled=()=>page.waitForFunction(()=>window.biograpiDemo&&!window.biograpiDemo.state.transitioning);
-async function pause(ms=850){await page.waitForTimeout(ms);await page.waitForFunction(()=>window.biograpiDemo&&!window.biograpiDemo.state.cameraAnimating);}
-async function point(id){return page.evaluate(id=>window.biograpiDemo.projectApartment(id),id);}
+const state=()=>page.evaluate(()=>window.demo1.state);
+const stats=()=>page.evaluate(()=>window.demo1.stats);
+const settled=()=>page.waitForFunction(()=>window.demo1&&!window.demo1.state.transitioning);
+async function pause(ms=850){await page.waitForTimeout(ms);await page.waitForFunction(()=>window.demo1&&!window.demo1.state.cameraAnimating);}
+async function point(id){return page.evaluate(id=>window.demo1.projectApartment(id),id);}
 async function screenshot(name){await page.screenshot({path:`artifacts/${name}.png`});}
 async function saveModel(kind,filename){
- const bytes=await page.evaluate(async kind=>Array.from(new Uint8Array(await window.biograpiDemo.exportModel(kind))),kind);
+ const bytes=await page.evaluate(async kind=>Array.from(new Uint8Array(await window.demo1.exportModel(kind))),kind);
  const buffer=Buffer.from(bytes);assert.equal(buffer.readUInt32LE(0),0x46546c67);
  await writeFile(`public/models/${filename}`,buffer);
  const gltf=await new GLTFLoader().parseAsync(buffer.buffer.slice(buffer.byteOffset,buffer.byteOffset+buffer.byteLength),'');
@@ -38,7 +38,7 @@ async function saveModel(kind,filename){
 try{
  // Block all external resources: fonts, images, JS and geometry must be local.
  await page.route('**/*',route=>new URL(route.request().url()).origin===new URL(base).origin?route.continue():route.abort());
- await page.goto(base);await page.waitForFunction(()=>window.biograpiDemo);await pause();
+ await page.goto(base);await page.waitForFunction(()=>window.demo1);await pause();
  const initial=await stats();assert.equal(initial.apartments,290);assert(initial.drawCalls<65);
  assert(Math.abs(initial.maxPolar-initial.minPolar-Math.PI/2)<1e-8);
  checks.push({check:'Offline-capable desktop rendering / 90° building orbit',...initial});
@@ -63,7 +63,7 @@ try{
  const expected=Math.atan2(Math.sin(circleStart.azimuth+7.2),Math.cos(circleStart.azimuth+7.2));assert(Math.abs(Math.atan2(Math.sin(circled.azimuth-expected),Math.cos(circled.azimuth-expected)))<.025, JSON.stringify({rotated:rotated.azimuth,circled:circled.azimuth,expected}));
  await page.locator('#zoom-in').click();await pause(300);assert((await stats()).distance<circled.distance);
  await page.locator('#reset-view').click();await pause();await screenshot('apartment-desktop');
- await saveModel('apartment','biograpi-apartment-3-windows.glb');
+ await saveModel('apartment','demo1-apartment-3-windows.glb');
  checks.push({check:'Apartment hover/click, transition, 360° rotation, locked elevation, zoom and reset',...interior});
  await page.keyboard.press('Escape');await settled();assert.equal((await state()).view,'building');
  // Test all four façades via genuine UI, including bottom and top residential floors.
@@ -74,46 +74,47 @@ try{
  }
  checks.push({check:'Direct apartment picking works on front, rear, both sides, floor 8 and floor 36'});
  await page.locator('#enter-button').click();await settled();assert.equal((await state()).selected,'A-2010');
- await saveModel('apartment','biograpi-apartment-4-windows.glb');
+ await saveModel('apartment','demo1-apartment-4-windows.glb');
  await page.locator('#back-button').click();await settled();
- await saveModel('building','biograpi-building.glb');
+ await saveModel('building','demo1-building.glb');
  await page.locator('#reset-view').click();await pause();
  // Actual vertical controls clamp before either pole.
  await page.locator('#viewport').focus();for(let i=0;i<30;i++)await page.keyboard.press('ArrowUp');
  let angle=await stats();assert(Math.abs(angle.polar-angle.minPolar)<1e-7);
  for(let i=0;i<35;i++)await page.keyboard.press('ArrowDown');angle=await stats();assert(Math.abs(angle.polar-angle.maxPolar)<1e-7);
  await page.locator('#reset-view').click();await pause();
- await page.locator('#auto-rotate').click();const before=await stats();await page.waitForFunction(azimuth=>Math.abs(window.biograpiDemo.stats.azimuth-azimuth)>.01,before.azimuth,{timeout:10000});await page.locator('#auto-rotate').click();
- await page.locator('#reference-button').click();await expect(page.locator('#reference-dialog')).toBeVisible();
- assert(await page.locator('#reference-dialog img').evaluateAll(imgs=>imgs.every(i=>i.complete&&i.naturalWidth>0)));
- const download=page.waitForEvent('download');await page.locator('#export-model').click();const file=await download;assert.equal(file.suggestedFilename(),'biograpi-building.glb');
- await page.locator('#close-reference').click();
- checks.push({check:'Orbit limits, automatic rotation, references and GLB download UI'});
+ await page.locator('#auto-rotate').click();const before=await stats();await page.waitForFunction(azimuth=>Math.abs(window.demo1.stats.azimuth-azimuth)>.01,before.azimuth,{timeout:10000});await page.locator('#auto-rotate').click();
+ await page.locator('#about-button').click();await expect(page.locator('#about-dialog')).toBeVisible();
+ await expect(page.locator('#about-dialog')).toContainText('About demo1');
+ assert.equal(await page.locator('#about-dialog img').count(),0);
+ const download=page.waitForEvent('download');await page.locator('#export-model').click();const file=await download;assert.equal(file.suggestedFilename(),'demo1-building.glb');
+ await page.locator('#close-about').click();
+ checks.push({check:'Orbit limits, automatic rotation, demo information and GLB download UI'});
  // Release the desktop WebGL context before software-rendered mobile checks.
  await context.close();
  // Fresh mobile context exercises real touch events (including a two-finger pinch).
  const mobile=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
- const mp=await mobile.newPage();mp.on('pageerror',e=>errors.push(e.message));await mp.goto(base);await mp.waitForFunction(()=>window.biograpiDemo);await mp.waitForTimeout(800);
+ const mp=await mobile.newPage();mp.on('pageerror',e=>errors.push(e.message));await mp.goto(base);await mp.waitForFunction(()=>window.demo1);await mp.waitForTimeout(800);
  assert.equal(await mp.evaluate(()=>document.documentElement.scrollWidth),390);
- assert((await mp.evaluate(()=>window.biograpiDemo.stats)).pixelRatio<=1.5);
+ assert((await mp.evaluate(()=>window.demo1.stats)).pixelRatio<=1.5);
  await mp.screenshot({path:'artifacts/building-mobile.png'});
  const cdp=await mobile.newCDPSession(mp);
  const touches=(spread)=>[{x:195-spread,y:350,id:1},{x:195+spread,y:350,id:2}];
- const startDistance=await mp.evaluate(()=>window.biograpiDemo.stats.distance);
+ const startDistance=await mp.evaluate(()=>window.demo1.stats.distance);
  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:touches(25)});
  for(let spread=30;spread<=65;spread+=5)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:touches(spread)});
  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await mp.waitForTimeout(500);
- assert.equal((await mp.evaluate(()=>window.biograpiDemo.state)).view,'building');assert((await mp.evaluate(()=>window.biograpiDemo.stats.distance))<startDistance);
+ assert.equal((await mp.evaluate(()=>window.demo1.state)).view,'building');assert((await mp.evaluate(()=>window.demo1.stats.distance))<startDistance);
  await mp.locator('#reset-view').tap();await mp.waitForTimeout(900);
- const pt=await mp.evaluate(()=>window.biograpiDemo.projectApartment('A-2002'));await mp.touchscreen.tap(pt.x,pt.y);
- await mp.waitForFunction(()=>window.biograpiDemo.state.view==='apartment'&&!window.biograpiDemo.state.transitioning);
+ const pt=await mp.evaluate(()=>window.demo1.projectApartment('A-2002'));await mp.touchscreen.tap(pt.x,pt.y);
+ await mp.waitForFunction(()=>window.demo1.state.view==='apartment'&&!window.demo1.state.transitioning);
  await mp.screenshot({path:'artifacts/apartment-mobile.png'});
- const mobilePolar=await mp.evaluate(()=>window.biograpiDemo.stats.polar);
+ const mobilePolar=await mp.evaluate(()=>window.demo1.stats.polar);
  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:210,y:370,id:1}]});
  for(let i=1;i<=8;i++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:210+i*10,y:370-i*10,id:1}]});
  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await mp.waitForTimeout(500);
- assert(Math.abs(await mp.evaluate(()=>window.biograpiDemo.stats.polar)-mobilePolar)<1e-7);
- await mp.locator('#back-button').tap();await mp.waitForFunction(()=>window.biograpiDemo.state.view==='building'&&!window.biograpiDemo.state.transitioning);
+ assert(Math.abs(await mp.evaluate(()=>window.demo1.stats.polar)-mobilePolar)<1e-7);
+ await mp.locator('#back-button').tap();await mp.waitForFunction(()=>window.demo1.state.view==='building'&&!window.demo1.state.transitioning);
  await mp.setViewportSize({width:844,height:390});await mp.waitForTimeout(500);assert.equal(await mp.evaluate(()=>document.documentElement.scrollWidth),844);await mp.screenshot({path:'artifacts/building-landscape.png'});
  await mobile.close();checks.push({check:'Mobile portrait/landscape, DPR cap, touch selection, pinch zoom, drag and return'});
  assert.deepEqual(errors,[]);

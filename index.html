@@ -4,21 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f2f1e9" />
-  <meta name="description" content="Explore a Biograpi-inspired residence in interactive 3D. Select an apartment and step into a furnished cutaway." />
-  <title>Biograpi · A new perspective</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%232e493e'/%3E%3Ctext x='11' y='29' font-family='serif' font-size='30' fill='%23fff'%3Eb%3C/text%3E%3C/svg%3E" />
+  <meta name="description" content="Explore a concept residence in demo1 in interactive 3D. Select an apartment and step into a furnished cutaway." />
+  <title>demo1 · A new perspective</title>
+  <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg"/>
   <link rel="stylesheet" href="./src/style.css" />
 </head>
 <body>
   <main id="app" data-view="building">
     <div id="viewport" aria-label="Interactive 3D building. Drag to rotate, scroll or pinch to zoom. Select a residence to look inside." role="region" tabindex="0"></div>
-    <div id="loading"><span class="loading-mark">b.</span><p>Building your perspective<span class="loading-dots">…</span></p></div>
+    <div id="loading"><span class="loading-mark">1</span><p>Building your perspective<span class="loading-dots">…</span></p></div>
     <header class="header">
-      <a class="brand" href="./" aria-label="Biograpi home"><span class="brand-icon">b.</span><span>biograpi<span class="brand-caption">A PLACE FOR YOUR STORY</span></span></a>
-      <div class="header-actions"><span class="live-label"><i></i> LIVE 3D</span><button id="reference-button" class="text-button">The inspiration <span>↗</span></button></div>
+      <a class="brand" href="./" aria-label="demo1 home"><span class="brand-icon">1</span><span>demo1<span class="brand-caption">A PLACE FOR YOUR STORY</span></span></a>
+      <div class="header-actions"><span class="live-label"><i></i> LIVE 3D</span><button id="about-button" class="text-button">About demo1 <span>↗</span></button></div>
     </header>
     <section class="intro" aria-labelledby="view-title">
-      <p class="eyebrow" id="view-eyebrow">BIOGRAPI / RESIDENCES</p>
+      <p class="eyebrow" id="view-eyebrow">demo1 / RESIDENCES</p>
       <h1 id="view-title">A new<br><em>perspective.</em></h1>
       <p class="intro-copy" id="intro-copy">Find a space that feels like you.<br>Explore the building. Step inside a home.</p>
       <button class="back-button" id="back-button" hidden><span>←</span> Back to the building</button>
@@ -53,7 +53,7 @@
     <div id="hover-tooltip" role="status" hidden></div>
     <div id="announcement" class="sr-only" aria-live="polite"></div>
     <div id="transition-veil" aria-hidden="true"></div>
-    <dialog id="reference-dialog"><div class="dialog-head"><div><p class="eyebrow">FROM IMAGE TO SPACE</p><h2>The inspiration</h2></div><button id="close-reference" aria-label="Close references">×</button></div><p class="dialog-copy">A procedural interpretation of the supplied references. Unseen façades, apartment divisions and dimensions are illustrative; every home opens a shared two-bedroom layout with three or four window bays.</p><div class="reference-images"><figure><img src="%BASE_URL%references/building.webp" alt="Original architectural rendering of the white tower and glazed podium"/><figcaption>01 / Building reference</figcaption></figure><figure><img src="%BASE_URL%references/apartment.webp" alt="Original two-bedroom apartment cutaway with furnished rooms and balconies"/><figcaption>02 / Apartment reference</figcaption></figure></div><button id="export-model" class="primary-button"><span>Download current 3D model (.glb)</span><span>↓</span></button><p id="export-status" role="status"></p></dialog>
+    <dialog id="about-dialog"><div class="dialog-head"><div><p class="eyebrow">INTERACTIVE 3D DEMO</p><h2>About demo1</h2></div><button id="close-about" aria-label="Close demo information">×</button></div><p class="dialog-copy">Explore an illustrative tower and furnished apartments. Select a home, move inside, and download the current model. Dimensions and layouts are conceptual.</p><button id="export-model" class="primary-button"><span>Download current 3D model (.glb)</span><span>↓</span></button><p id="export-status" role="status"></p></dialog>
     <noscript>This demo needs JavaScript and a browser with WebGL 2 support.</noscript>
   </main>
   <script type="module" src="./src/main.js"></script>

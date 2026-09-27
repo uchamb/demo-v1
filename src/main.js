@@ -10,7 +10,7 @@ let renderer;
 try {
   renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
 } catch(error) {
-  $('loading').innerHTML='<span class="loading-mark">b.</span><p>Your browser could not start WebGL 2.</p><p>Enable hardware acceleration or try a current browser.</p>';
+  $('loading').innerHTML='<span class="loading-mark">1</span><p>Your browser could not start WebGL 2.</p><p>Enable hardware acceleration or try a current browser.</p>';
   throw error;
 }
 renderer.setPixelRatio(Math.min(devicePixelRatio,innerWidth<761?1.5:1.75));
@@ -214,7 +214,7 @@ function syncViewUI(){
  syncCard();
  const interior=state.view==='apartment';app.dataset.view=state.view;
  $('view-title').innerHTML=interior?'Room to<br><em>make it yours.</em>':'A new<br><em>perspective.</em>';
- $('view-eyebrow').textContent=interior?`RESIDENCE ${state.selected.id} / FLOOR ${state.selected.floor}`:'BIOGRAPI / RESIDENCES';
+ $('view-eyebrow').textContent=interior?`RESIDENCE ${state.selected.id} / FLOOR ${state.selected.floor}`:'demo1 / RESIDENCES';
  $('intro-copy').innerHTML=interior?'A closer look at your next chapter.<br>Thoughtful spaces, inside and out.':'Find a space that feels like you.<br>Explore the building. Step inside a home.';
  for(const id of ['project-meta','floor-panel','selection-controls','enter-button'])$(id).hidden=interior;
  $('back-button').hidden=!interior;$('interior-note').hidden=!interior;
@@ -279,7 +279,7 @@ $('reset-view').onclick=()=>{
  controls.autoRotate=false;syncAutoRotate();clearHover();state.floor=null;showFloor();animatePose(homePose(state.view));
 };
 window.addEventListener('keydown',e=>{
- if(e.key==='Escape'&&!$('reference-dialog').open)backToBuilding();
+ if(e.key==='Escape'&&!$('about-dialog').open)backToBuilding();
  if(document.activeElement!==viewport||state.transitioning)return;
  if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','-','Enter'].includes(e.key))e.preventDefault();
  if(e.key==='Enter'&&state.view==='building')enterApartment(state.selected);
@@ -293,9 +293,9 @@ window.addEventListener('keydown',e=>{
   camera.position.copy(controls.target).add(new THREE.Vector3().setFromSpherical(spherical));controls.update();markDirty();
  }
 });
-$('reference-button').onclick=()=>{controls.autoRotate=false;syncAutoRotate();$('reference-dialog').showModal();};
-$('close-reference').onclick=()=>$('reference-dialog').close();
-$('reference-dialog').addEventListener('click',e=>{if(e.target===$('reference-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
+$('about-button').onclick=()=>{controls.autoRotate=false;syncAutoRotate();$('about-dialog').showModal();};
+$('close-about').onclick=()=>$('about-dialog').close();
+$('about-dialog').addEventListener('click',e=>{if(e.target===$('about-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
 async function exportModel(kind=state.view){
  const {GLTFExporter}=await import('three/addons/exporters/GLTFExporter.js');
  const model=kind==='building'?building.group:currentApartment;
@@ -304,7 +304,7 @@ async function exportModel(kind=state.view){
 }
 $('export-model').onclick=async()=>{
  $('export-model').disabled=true;$('export-status').textContent='Preparing your model…';
- try{const result=await exportModel();const blob=new Blob([result],{type:'model/gltf-binary'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`biograpi-${state.view}.glb`;a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);$('export-status').textContent='Model downloaded. Compatible with Three.js GLTFLoader.';}
+ try{const result=await exportModel();const blob=new Blob([result],{type:'model/gltf-binary'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`demo1-${state.view}.glb`;a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);$('export-status').textContent='Model downloaded. Compatible with Three.js GLTFLoader.';}
  catch(error){console.error(error);$('export-status').textContent='Export failed. Please try again.';}
  finally{$('export-model').disabled=false;}
 };
@@ -327,7 +327,7 @@ function frame(now){
 syncViewUI();renderer.shadowMap.needsUpdate=true;renderer.render(scene,camera);$('loading').classList.add('loaded');requestAnimationFrame(frame);
 // Read-only diagnostics plus model export are useful for validating the standalone prototype.
 // No account, API or production data is used by this demo.
-window.biograpiDemo={
+window.demo1={
  get state(){return {view:state.view,selected:state.selected.id,hovered:state.hovered?.id||null,transitioning:state.transitioning,cameraAnimating:Boolean(tween),floor:state.floor};},
  get stats(){return {drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,geometries:renderer.info.memory.geometries,apartments:building.apartments.length,pixelRatio:renderer.getPixelRatio(),polar:controls.getPolarAngle(),azimuth:controls.getAzimuthalAngle(),minPolar:controls.minPolarAngle,maxPolar:controls.maxPolarAngle,minDistance:controls.minDistance,distance:controls.getDistance()};},
  projectApartment(id){const a=building.apartments.find(a=>a.id===id);if(!a)return null;camera.updateMatrixWorld();const v=new THREE.Vector3(...a.center).project(camera);return {x:(v.x+1)*viewport.clientWidth/2,y:(1-v.y)*viewport.clientHeight/2,visible:Math.abs(v.x)<1&&Math.abs(v.y)<1};},

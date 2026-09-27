@@ -66,7 +66,7 @@ function tree(b, x,z,height=6,y=0,variant=0) {
 }
 
 export function createBuilding() {
-  const group = new THREE.Group(); group.name = 'Biograpi-inspired tower';
+  const group = new THREE.Group(); group.name = 'demo1 tower';
   const b = new Batches(group), apartments = [], pickMeshes = [];
   const { floorHeight, firstFloor, lastFloor, podiumHeight } = BUILDING;
   b.box(M.stone,0,.5,0,43,1,30);
@@ -174,7 +174,7 @@ export function createBuilding() {
   b.box(M.stone,0,roof+5.64,-1,11,.9,7);
   for (let x=-10;x<=10;x+=5) { b.box(M.stone,x,roof+.85,7.9,1.3,.6,1); b.add(crownGeometry,M.leaf,x,roof+1.65,7.9,.6,.8,.5); }
   b.flush();
-  group.userData={description:'Concept model inspired by supplied Biograpi exterior image; illustrative dimensions.',units:'metres',apartments:apartments.map(({pickMesh,...data})=>data)};
+  group.userData={description:'demo1 concept tower; illustrative dimensions.',units:'metres',apartments:apartments.map(({pickMesh,...data})=>data)};
   const occluders = [];
   for (const [x,y,z,sx,sy,sz] of [[0,10,0,40,20,26],[0,(roof+22)/2,0,28.8,roof-22,15.2],[0,roof+5,0,31.5,1,18.8]]) {
     const m=new THREE.Mesh(boxGeometry);m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.updateMatrixWorld();occluders.push(m);
@@ -223,7 +223,7 @@ export function createSurroundings() {
 
 export function createApartment({windows=3}={}) {
   const group=new THREE.Group();group.name=`Two-bedroom residence · ${windows} window bays`;
-  group.userData={description:'Illustrative shared two-bedroom cutaway inspired by supplied reference. Not a surveyed floor plan.',units:'metres',windows};
+  group.userData={description:'demo1 illustrative two-bedroom cutaway; conceptual floor plan.',units:'metres',windows};
   const b=new Batches(group);
   const wall=material('#eeebdf'), cap=material('#d8d2c3'), timber=material('#ceb995'), timberAlt=material('#c4ad88'),
     tile=material('#c9cbc0'), linen=material('#e6e1d2'), sage=material('#98a58a'), cushion=material('#babda6'),
