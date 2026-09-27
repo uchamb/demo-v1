@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f2f1e9" />
+  <meta name="description" content="Explore a Biograpi-inspired residence in interactive 3D. Select an apartment and step into a furnished cutaway." />
+  <title>Biograpi · A new perspective</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%232e493e'/%3E%3Ctext x='11' y='29' font-family='serif' font-size='30' fill='%23fff'%3Eb%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./src/style.css" />
+</head>
+<body>
+  <main id="app" data-view="building">
+    <div id="viewport" aria-label="Interactive 3D building. Drag to rotate, scroll or pinch to zoom. Select a residence to look inside." role="region" tabindex="0"></div>
+    <div id="loading"><span class="loading-mark">b.</span><p>Building your perspective<span class="loading-dots">…</span></p></div>
+    <header class="header">
+      <a class="brand" href="./" aria-label="Biograpi home"><span class="brand-icon">b.</span><span>biograpi<span class="brand-caption">A PLACE FOR YOUR STORY</span></span></a>
+      <div class="header-actions"><span class="live-label"><i></i> LIVE 3D</span><button id="reference-button" class="text-button">The inspiration <span>↗</span></button></div>
+    </header>
+    <section class="intro" aria-labelledby="view-title">
+      <p class="eyebrow" id="view-eyebrow">BIOGRAPI / RESIDENCES</p>
+      <h1 id="view-title">A new<br><em>perspective.</em></h1>
+      <p class="intro-copy" id="intro-copy">Find a space that feels like you.<br>Explore the building. Step inside a home.</p>
+      <button class="back-button" id="back-button" hidden><span>←</span> Back to the building</button>
+      <div class="project-meta" id="project-meta"><span>36 <small>FLOORS</small></span><span class="meta-line"></span><span>360° <small>TO EXPLORE</small></span></div>
+    </section>
+    <aside class="floor-panel" id="floor-panel" aria-label="Floor navigation">
+      <span class="vertical-label">FLOORS</span>
+      <div class="floor-stops" id="floor-stops"></div>
+      <button id="all-floors" class="floor-all active" title="Show all floors">ALL</button>
+    </aside>
+    <div class="compass" aria-hidden="true"><span>N</span><svg id="compass-needle" viewBox="0 0 44 44"><path d="M22 5 29 30 22 26 15 30Z" fill="currentColor"/><path d="m22 38-7-8 7-4 7 4Z" fill="currentColor" opacity=".22"/></svg></div>
+    <section class="residence-card" aria-label="Apartment details">
+      <button class="card-heading" id="residence-toggle" type="button" aria-expanded="true" aria-controls="residence-details" aria-label="Collapse apartment details">
+        <span class="card-heading-text"><span class="eyebrow" id="card-eyebrow">YOUR NEXT CHAPTER</span><span id="card-summary" class="card-summary">A-2002 · Floor 20</span></span>
+        <span class="availability"><i></i> Concept residence</span>
+        <span class="card-toggle-indicator"><span id="card-toggle-label">Hide</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 7 5 5 5-5"/></svg></span>
+      </button>
+      <div id="residence-details">
+      <div class="card-title-row"><h2 id="apartment-title">Residence A-2002</h2><span class="card-arrow" aria-hidden="true">↗</span></div>
+      <div class="residence-stats"><div><strong id="apartment-area">86.4 <small>m²</small></strong><span>Living space</span></div><div><strong id="apartment-beds">2</strong><span>Bedrooms</span></div><div><strong id="apartment-floor">20</strong><span>Floor</span></div></div>
+      <div class="selection-controls" id="selection-controls">
+        <label>Floor<select id="floor-select" aria-label="Choose floor"></select></label>
+        <label>Residence<select id="apartment-select" aria-label="Choose residence"></select></label>
+      </div>
+      <button id="enter-button" class="primary-button"><span>Explore this residence</span><span>↗</span></button>
+      <div id="interior-note" hidden><span class="small-dot"></span> Furnished cutaway · drag to look around</div>
+      </div>
+    </section>
+    <nav class="view-switch" aria-label="Choose model view"><button id="building-view" class="active"><svg viewBox="0 0 20 20"><path d="M4 17V5l8-3v15M2 17h16M12 7h4v10M7 7v1m0 3v1m3-7v1m0 3v1m0 3v1"/></svg>Building</button><button id="apartment-view"><svg viewBox="0 0 20 20"><path d="m3 7 7-4 7 4v7l-7 4-7-4Zm0 0 7 4 7-4m-7 4v7"/></svg>Apartment</button></nav>
+    <nav class="scene-tools" aria-label="3D view controls"><button id="zoom-in" aria-label="Zoom in" title="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out" title="Zoom out">−</button><span></span><button id="auto-rotate" aria-label="Start automatic rotation" aria-pressed="false" title="Automatic rotation">⟳</button><button id="reset-view" aria-label="Reset camera" title="Reset camera"><svg viewBox="0 0 24 24"><path d="M4 10V4m0 0h6M4 4l4 4m12 6v6m0 0h-6m6 0-4-4M20 10V4h-6M4 14v6h6"/></svg></button></nav>
+    <footer class="footer"><span id="interaction-hint"><span class="drag-icon">↔</span> Drag to rotate <b>·</b> Scroll to zoom <b>·</b> Select a home</span><span class="concept-note">An architectural study <span> / </span> 01</span></footer>
+    <div id="hover-tooltip" role="status" hidden></div>
+    <div id="announcement" class="sr-only" aria-live="polite"></div>
+    <div id="transition-veil" aria-hidden="true"></div>
+    <dialog id="reference-dialog"><div class="dialog-head"><div><p class="eyebrow">FROM IMAGE TO SPACE</p><h2>The inspiration</h2></div><button id="close-reference" aria-label="Close references">×</button></div><p class="dialog-copy">A procedural interpretation of the supplied references. Unseen façades, apartment divisions and dimensions are illustrative; every home opens a shared two-bedroom layout with three or four window bays.</p><div class="reference-images"><figure><img src="%BASE_URL%references/building.webp" alt="Original architectural rendering of the white tower and glazed podium"/><figcaption>01 / Building reference</figcaption></figure><figure><img src="%BASE_URL%references/apartment.webp" alt="Original two-bedroom apartment cutaway with furnished rooms and balconies"/><figcaption>02 / Apartment reference</figcaption></figure></div><button id="export-model" class="primary-button"><span>Download current 3D model (.glb)</span><span>↓</span></button><p id="export-status" role="status"></p></dialog>
+    <noscript>This demo needs JavaScript and a browser with WebGL 2 support.</noscript>
+  </main>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
