@@ -16,5 +16,5 @@
     "vite": "6.4.1",
     "@playwright/test": "1.55.1"
   },
-  "description": "Explore a Biograpi-inspired tower, select a residence, enter its furnished cutaway, and download reusable GLB models."
+  "description": "Explore demo1: a concept tower, furnished apartments, and downloadable 3D models."
 }

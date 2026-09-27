@@ -1,8 +1,8 @@
-# demo-v1 — Building and apartments
+# demo1
 
 [Open the live demo](https://uchamb.github.io/demo-v1/)
 
-Explore a Biograpi-inspired tower, select a residence, enter its furnished cutaway, and download reusable GLB models.
+Explore demo1: a concept tower, furnished apartments, and downloadable 3D models.
 
 ## Run locally
 
@@ -22,7 +22,7 @@ npm run build
 npm run preview
 ```
 
-Open http://localhost:5183/demo-v1/. The `dist` directory is a complete static website. JavaScript, fonts, geometry and reference images are bundled locally; no backend or runtime API key is required. Use an HTTP server, not a `file://` URL.
+Open http://localhost:5183/demo-v1/. The `dist` directory is a complete static website. JavaScript, fonts and geometry are bundled locally; no backend or runtime API key is required. Use an HTTP server, not a `file://` URL.
 
 The Vite base path is `/demo-v1/` for GitHub Pages. For a different hosting path, set `base` in `vite.config.js` accordingly.
 
@@ -40,6 +40,6 @@ Browser checks use Playwright and local Google Chrome. Set `CHROME_PATH` to use 
 
 GitHub Pages uses the GitHub Actions workflow in `.github/workflows/pages.yml`. Pull requests targeting `development` verify the production build. Merging into `development` builds and publishes the website automatically.
 
-## Sources
+## Modeling and licenses
 
-The building and apartments are illustrative interpretations of supplied reference images, not verified architectural plans or live availability data. Reference-image rights remain with their respective owners. Reusable models are in `public/models/`. Font and Three.js license notices are retained in `public/licenses/` and `src/fonts/`.
+All building dimensions and apartment layouts are illustrative. Reusable models are in `public/models/`. Font and Three.js license notices are retained in `public/licenses/` and `src/fonts/`.
