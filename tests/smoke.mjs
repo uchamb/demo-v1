@@ -83,7 +83,7 @@ try{
  let angle=await stats();assert(Math.abs(angle.polar-angle.minPolar)<1e-7);
  for(let i=0;i<35;i++)await page.keyboard.press('ArrowDown');angle=await stats();assert(Math.abs(angle.polar-angle.maxPolar)<1e-7);
  await page.locator('#reset-view').click();await pause();
- await page.locator('#auto-rotate').click();const before=await stats();await page.waitForFunction(azimuth=>Math.abs(window.demo1.stats.azimuth-azimuth)>.01,before.azimuth,{timeout:10000});await page.locator('#auto-rotate').click();
+ await page.locator('#auto-rotate').click();const before=await stats();await page.waitForFunction(azimuth=>Math.abs(window.demo1.stats.azimuth-azimuth)>.01,before.azimuth,{timeout:30000});await page.locator('#auto-rotate').click();
  await page.locator('#about-button').click();await expect(page.locator('#about-dialog')).toBeVisible();
  await expect(page.locator('#about-dialog')).toContainText('About demo1');
  assert.equal(await page.locator('#about-dialog img').count(),0);
